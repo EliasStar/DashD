@@ -3,15 +3,19 @@ package display
 import (
 	"sync"
 
+	. "github.com/EliasStar/DashD/log"
 	"github.com/webview/webview"
 )
+
+const tag = "DISPLAY"
 
 var window webview.WebView
 var stopChannel chan bool
 var wg sync.WaitGroup
 
 func init() {
-	stopChannel = make(chan bool)
+	Info(tag, "Starting.")
+	stopChannel = make(chan bool, 1)
 	wg.Add(1)
 
 	go func() {
@@ -29,6 +33,7 @@ func init() {
 				return
 
 			default:
+				Info(tag, "Restarting.")
 			}
 		}
 	}()
@@ -37,10 +42,13 @@ func init() {
 // Displays the content from the given URL.
 func Show(url string) {
 	window.Navigate(url)
+	Info(tag, "Now showing:", url)
 }
 
 // Stops the UI goroutine and disposes the webview.
 func Destroy() {
+	Info(tag, "Stopping.")
 	stopChannel <- false
+	window.Terminate()
 	wg.Wait()
 }

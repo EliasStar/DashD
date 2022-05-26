@@ -3,10 +3,12 @@ package screen
 import (
 	"time"
 
-	. "github.com/EliasStar/DashD/utils"
+	. "github.com/EliasStar/DashD/log"
 	"github.com/warthog618/gpiod"
 	"github.com/warthog618/gpiod/device/rpi"
 )
+
+const tag = "SCREEN"
 
 var (
 	buttonPower  *gpiod.Line
@@ -17,48 +19,50 @@ var (
 )
 
 func init() {
+	Info(tag, "Starting.")
 	chip, err := gpiod.NewChip("gpiochip0", gpiod.WithConsumer("DashD"), gpiod.AsOutput(), gpiod.WithBiasDisabled)
-	defer PanicIf(chip.Close())
-	PanicIf(err)
+	defer PanicIf(tag, chip.Close())
+	PanicIf(tag, err)
 
 	buttonPower, err = chip.RequestLine(rpi.GPIO17)
-	PanicIf(err)
+	PanicIf(tag, err)
 
 	buttonMenu, err = chip.RequestLine(rpi.GPIO27)
-	PanicIf(err)
+	PanicIf(tag, err)
 
 	buttonPlus, err = chip.RequestLine(rpi.GPIO22)
-	PanicIf(err)
+	PanicIf(tag, err)
 
 	buttonMinus, err = chip.RequestLine(rpi.GPIO23)
-	PanicIf(err)
+	PanicIf(tag, err)
 
 	buttonSource, err = chip.RequestLine(rpi.GPIO24)
-	PanicIf(err)
+	PanicIf(tag, err)
 }
 
-func PressPowerButton() error {
-	return pressButton(buttonPower)
+func PushPowerButton() error {
+	return pushButton(buttonPower)
 }
 
-func PressSourceButton() error {
-	return pressButton(buttonSource)
+func PushSourceButton() error {
+	return pushButton(buttonSource)
 }
 
-func PressMenuButton() error {
-	return pressButton(buttonMenu)
+func PushMenuButton() error {
+	return pushButton(buttonMenu)
 }
 
-func PressPlusButton() error {
-	return pressButton(buttonPlus)
+func PushPlusButton() error {
+	return pushButton(buttonPlus)
 }
 
-func PressMinusButton() error {
-	return pressButton(buttonMinus)
+func PushMinusButton() error {
+	return pushButton(buttonMinus)
 }
 
-func pressButton(btn *gpiod.Line) (err error) {
+func pushButton(btn *gpiod.Line) (err error) {
 	if err = btn.SetValue(1); err != nil {
+		Error(tag, "Error while trying to press button:", err)
 		btn.SetValue(0)
 		return
 	}
@@ -66,6 +70,7 @@ func pressButton(btn *gpiod.Line) (err error) {
 	time.Sleep(250 * time.Millisecond)
 
 	if err = btn.SetValue(0); err != nil {
+		Error(tag, "Error while trying to release button:", err)
 		btn.SetValue(0)
 		return
 	}
@@ -75,9 +80,10 @@ func pressButton(btn *gpiod.Line) (err error) {
 }
 
 func Destroy() {
-	PanicIf(buttonPower.Close())
-	PanicIf(buttonMenu.Close())
-	PanicIf(buttonPlus.Close())
-	PanicIf(buttonMinus.Close())
-	PanicIf(buttonSource.Close())
+	Info(tag, "Stopping.")
+	PanicIf(tag, buttonPower.Close())
+	PanicIf(tag, buttonMenu.Close())
+	PanicIf(tag, buttonPlus.Close())
+	PanicIf(tag, buttonMinus.Close())
+	PanicIf(tag, buttonSource.Close())
 }
