@@ -1,6 +1,9 @@
 # VS Code
 /.vscode/
 
+# Output
+/build/
+
 # Binaries for programs and plugins
 *.exe
 *.dll

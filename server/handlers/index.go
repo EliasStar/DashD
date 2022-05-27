@@ -14,6 +14,6 @@ func HandleIndex(w http.ResponseWriter, r *http.Request) {
 		w.Write(index)
 		return
 	} else {
-		http.Error(w, "404 Not Found", http.StatusNotFound)
+		http.Error(w, "404 Not Found", http.StatusOK)
 	}
 }
