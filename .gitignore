@@ -1,3 +1,6 @@
+# VS Code
+/.vscode/
+
 # Binaries for programs and plugins
 *.exe
 *.dll

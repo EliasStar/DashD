@@ -7,15 +7,14 @@ import (
 	"github.com/webview/webview"
 )
 
-const tag = "DISPLAY"
+const tag = "Display"
 
 var window webview.WebView
-var stopChannel chan bool
+var stopChannel = make(chan any)
 var wg sync.WaitGroup
 
 func init() {
 	Info(tag, "Starting.")
-	stopChannel = make(chan bool, 1)
 	wg.Add(1)
 
 	go func() {
@@ -39,16 +38,14 @@ func init() {
 	}()
 }
 
-// Displays the content from the given URL.
 func Show(url string) {
 	window.Navigate(url)
 	Info(tag, "Now showing:", url)
 }
 
-// Stops the UI goroutine and disposes the webview.
 func Destroy() {
 	Info(tag, "Stopping.")
-	stopChannel <- false
+	close(stopChannel)
 	window.Terminate()
 	wg.Wait()
 }

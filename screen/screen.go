@@ -8,35 +8,35 @@ import (
 	"github.com/warthog618/gpiod/device/rpi"
 )
 
-const tag = "SCREEN"
+const tag = "Screen"
 
 var (
 	buttonPower  *gpiod.Line
+	buttonSource *gpiod.Line
 	buttonMenu   *gpiod.Line
 	buttonPlus   *gpiod.Line
 	buttonMinus  *gpiod.Line
-	buttonSource *gpiod.Line
 )
 
 func init() {
 	Info(tag, "Starting.")
-	chip, err := gpiod.NewChip("gpiochip0", gpiod.WithConsumer("DashD"), gpiod.AsOutput(), gpiod.WithBiasDisabled)
-	defer PanicIf(tag, chip.Close())
+
+	var err error
+	options := []gpiod.LineReqOption{gpiod.WithConsumer("DashD"), gpiod.AsOutput(), gpiod.WithBiasDisabled}
+
+	buttonPower, err = gpiod.RequestLine("gpiochip0", rpi.GPIO17, options...)
 	PanicIf(tag, err)
 
-	buttonPower, err = chip.RequestLine(rpi.GPIO17)
+	buttonSource, err = gpiod.RequestLine("gpiochip0", rpi.GPIO24, options...)
 	PanicIf(tag, err)
 
-	buttonMenu, err = chip.RequestLine(rpi.GPIO27)
+	buttonMenu, err = gpiod.RequestLine("gpiochip0", rpi.GPIO27, options...)
 	PanicIf(tag, err)
 
-	buttonPlus, err = chip.RequestLine(rpi.GPIO22)
+	buttonPlus, err = gpiod.RequestLine("gpiochip0", rpi.GPIO22, options...)
 	PanicIf(tag, err)
 
-	buttonMinus, err = chip.RequestLine(rpi.GPIO23)
-	PanicIf(tag, err)
-
-	buttonSource, err = chip.RequestLine(rpi.GPIO24)
+	buttonMinus, err = gpiod.RequestLine("gpiochip0", rpi.GPIO23, options...)
 	PanicIf(tag, err)
 }
 
@@ -81,9 +81,9 @@ func pushButton(btn *gpiod.Line) (err error) {
 
 func Destroy() {
 	Info(tag, "Stopping.")
-	PanicIf(tag, buttonPower.Close())
-	PanicIf(tag, buttonMenu.Close())
-	PanicIf(tag, buttonPlus.Close())
-	PanicIf(tag, buttonMinus.Close())
-	PanicIf(tag, buttonSource.Close())
+	ErrorIf(tag, buttonPower.Close())
+	ErrorIf(tag, buttonSource.Close())
+	ErrorIf(tag, buttonMenu.Close())
+	ErrorIf(tag, buttonPlus.Close())
+	ErrorIf(tag, buttonMinus.Close())
 }

@@ -5,7 +5,7 @@ import (
 	ws281x "github.com/rpi-ws281x/rpi-ws281x-go"
 )
 
-const tag = "LIGHTING"
+const tag = "Lighting"
 
 var strip *ws281x.WS2811
 
@@ -42,8 +42,8 @@ func Render(colors []RGB) error {
 	return strip.Render()
 }
 
-func Length() int {
-	return len(strip.Leds(0)) - 1
+func Length() uint {
+	return uint(len(strip.Leds(0)) - 1)
 }
 
 func Destroy() {
