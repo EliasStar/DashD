@@ -25,6 +25,7 @@ func init() {
 	handler.HandleFunc("/", handlers.HandleIndex)
 
 	handler.HandleFunc("/display", handlers.HandleDisplay)
+	handler.HandleFunc("/resize", handlers.HandleResize)
 
 	handler.HandleFunc("/config", handlers.HandleConfig)
 	handler.HandleFunc("/update", handlers.HandleUpdate)

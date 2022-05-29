@@ -23,10 +23,15 @@ func main() {
 	flag.CommandLine.Init("DashD", flag.ExitOnError)
 	flag.CommandLine.Usage = nil
 
-	httpPort := flag.Uint("http_port", 80, "used by the http server")
-	udpPort := flag.Uint("udp_port", 1872, "used by the lighting socket")
+	httpPort := flag.Uint("p", 80, "port used by the http server")
+	udpPort := flag.Uint("u", 1872, "udp port used by the lighting socket")
+
+	displayWidth := flag.Uint("w", 1920, "width of the display")
+	displayHeight := flag.Uint("h", 1080, "height of the display")
 
 	flag.Parse()
+
+	display.Resize(*displayWidth, *displayHeight)
 
 	go server.ListenHTTP(*httpPort)
 	go server.ListenUDP(*udpPort)

@@ -3,7 +3,9 @@ package handlers
 import (
 	"encoding/base64"
 	"encoding/json"
+	"io"
 	"net/http"
+	"strings"
 
 	"github.com/EliasStar/DashD/lighting"
 	. "github.com/EliasStar/DashD/log"
@@ -27,7 +29,20 @@ func HandleConfig(w http.ResponseWriter, r *http.Request) {
 }
 
 func HandleUpdate(w http.ResponseWriter, r *http.Request) {
-	dec := base64.NewDecoder(base64.StdEncoding, r.Body)
+	if r.ParseForm() != nil {
+		return
+	}
+
+	var dec io.Reader
+	for _, v := range r.Form {
+
+		if len(v) > 0 {
+			dec = base64.NewDecoder(base64.StdEncoding, strings.NewReader(v[0]))
+			break
+		}
+
+		return
+	}
 
 	ignore := make([]byte, 2)
 	if n, err := dec.Read(ignore); err != nil || n < 2 {

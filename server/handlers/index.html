@@ -16,11 +16,21 @@
         </form>
         <h2>Display</h2>
         <form action='/display' method='post'>
+            <label>URL:</label>
             <input type='url' name='url' />
             <input type='submit' value='Show' />
         </form>
+        <br>
+        <form action='/resize' method='post'>
+            <label>Width:</label>
+            <input type='number' name='width' />
+            <label>Height:</label>
+            <input type='number' name='height' />
+            <input type='submit' value='Resize' />
+        </form>
         <h2>Lighting</h2>
         <form action='/update' method='post'>
+            <label>Base64:</label>
             <input type='text' name='base64' />
             <input type='submit' value='Update' />
         </form>

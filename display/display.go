@@ -21,7 +21,6 @@ func init() {
 		for {
 			window = webview.New(false)
 			window.SetTitle("DashD")
-			window.SetSize(1280, 720, webview.HintNone)
 
 			window.Run()
 
@@ -43,6 +42,13 @@ func Show(url string) {
 	window.Dispatch(func() {
 		window.Navigate(url)
 		Info(tag, "Now showing:", url)
+	})
+}
+
+func Resize(width, height uint) {
+	window.Dispatch(func() {
+		window.SetSize(int(width), int(height), webview.HintNone)
+		Info(tag, "Changed window size to:", width, "x", height)
 	})
 }
 
