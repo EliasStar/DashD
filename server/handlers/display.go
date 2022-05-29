@@ -8,7 +8,10 @@ import (
 )
 
 func HandleDisplay(w http.ResponseWriter, r *http.Request) {
-	r.ParseForm()
+	if r.ParseForm() != nil {
+		http.Error(w, "Bad Request", http.StatusBadRequest)
+		return
+	}
 
 	if url := r.Form.Get("url"); url != "" {
 		display.Show(url)
@@ -18,15 +21,20 @@ func HandleDisplay(w http.ResponseWriter, r *http.Request) {
 }
 
 func HandleResize(w http.ResponseWriter, r *http.Request) {
-	r.ParseForm()
+	if r.ParseForm() != nil {
+		http.Error(w, "Bad Request", http.StatusBadRequest)
+		return
+	}
 
 	width, err := strconv.ParseUint(r.Form.Get("width"), 10, 32)
 	if err != nil {
+		http.Error(w, "Bad Request", http.StatusBadRequest)
 		return
 	}
 
 	height, err := strconv.ParseUint(r.Form.Get("height"), 10, 32)
 	if err != nil {
+		http.Error(w, "Bad Request", http.StatusBadRequest)
 		return
 	}
 

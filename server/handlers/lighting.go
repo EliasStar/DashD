@@ -30,6 +30,7 @@ func HandleConfig(w http.ResponseWriter, r *http.Request) {
 
 func HandleUpdate(w http.ResponseWriter, r *http.Request) {
 	if r.ParseForm() != nil {
+		http.Error(w, "Bad Request", http.StatusBadRequest)
 		return
 	}
 

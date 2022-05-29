@@ -15,15 +15,12 @@ var wg sync.WaitGroup
 
 func init() {
 	Info(tag, "Starting.")
-	wg.Add(1)
+	window = webview.New(false)
 
+	wg.Add(1)
 	go func() {
 		for {
-			window = webview.New(false)
-			window.SetTitle("DashD")
-
 			window.Run()
-
 			window.Destroy()
 
 			select {
@@ -33,6 +30,7 @@ func init() {
 
 			default:
 				Info(tag, "Restarting.")
+				window = webview.New(false)
 			}
 		}
 	}()
