@@ -3,7 +3,6 @@ package handlers
 import (
 	"encoding/base64"
 	"encoding/json"
-	"io"
 	"net/http"
 
 	"github.com/EliasStar/DashD/lighting"
@@ -31,8 +30,7 @@ func HandleUpdate(w http.ResponseWriter, r *http.Request) {
 	dec := base64.NewDecoder(base64.StdEncoding, r.Body)
 
 	ignore := make([]byte, 2)
-	if n, err := dec.Read(ignore); err != nil || n != 2 {
-		Error("HTTP::HandleUpdate", "Failed to read ignore bytes: n=", n, "err=", err)
+	if n, err := dec.Read(ignore); err != nil || n < 2 {
 		return
 	}
 
@@ -40,21 +38,18 @@ func HandleUpdate(w http.ResponseWriter, r *http.Request) {
 	rgb := make([]byte, 3)
 	for {
 		n, err := dec.Read(rgb)
-		if err == io.EOF {
+		if err != nil || n < 3 {
 			break
-		}
-
-		if err != nil || n != 3 {
-			Error("HTTP::HandleUpdate", "Failed to read color: n=", n, "err=", err)
-			return
 		}
 
 		colors = append(colors, lighting.RGB{R: rgb[0], G: rgb[1], B: rgb[2]})
 	}
 
 	lighting.Render(colors)
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
 func HandleReset(w http.ResponseWriter, r *http.Request) {
 	lighting.Render(make([]lighting.RGB, lighting.Length()))
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 }

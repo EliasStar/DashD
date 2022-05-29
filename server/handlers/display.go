@@ -8,7 +8,10 @@ import (
 
 func HandleDisplay(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
+
 	if url := r.Form.Get("url"); url != "" {
 		display.Show(url)
 	}
+
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 }

@@ -21,6 +21,7 @@ func init() {
 		for {
 			window = webview.New(false)
 			window.SetTitle("DashD")
+			window.SetSize(1280, 720, webview.HintNone)
 
 			window.Run()
 
@@ -39,8 +40,10 @@ func init() {
 }
 
 func Show(url string) {
-	window.Navigate(url)
-	Info(tag, "Now showing:", url)
+	window.Dispatch(func() {
+		window.Navigate(url)
+		Info(tag, "Now showing:", url)
+	})
 }
 
 func Destroy() {

@@ -21,7 +21,6 @@ var socket net.PacketConn
 func init() {
 	Info(tag, "Starting.")
 	server.SetKeepAlivesEnabled(false)
-	server.Handler = &handler
 
 	handler.HandleFunc("/", handlers.HandleIndex)
 
@@ -36,6 +35,17 @@ func init() {
 	handler.HandleFunc("/menu", handlers.HandleMenu)
 	handler.HandleFunc("/plus", handlers.HandlePlus)
 	handler.HandleFunc("/minus", handlers.HandleMinus)
+
+	server.Handler = logRequests(&handler)
+}
+
+func logRequests(handler http.Handler) http.Handler {
+	log := func(w http.ResponseWriter, r *http.Request) {
+		Info(tag, r.Method, r.URL.Path)
+		handler.ServeHTTP(w, r)
+	}
+
+	return http.HandlerFunc(log)
 }
 
 func ListenHTTP(port uint) {
@@ -87,6 +97,8 @@ func ListenUDP(port uint) {
 
 func Destroy() {
 	Info(tag, "Stopping.")
-	ErrorIf(tag, socket.Close())
 	ErrorIf(tag, server.Shutdown(context.Background()))
+	if socket != nil {
+		ErrorIf(tag, socket.Close())
+	}
 }

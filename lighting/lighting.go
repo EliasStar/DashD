@@ -12,14 +12,15 @@ var strip *ws281x.WS2811
 func init() {
 	Info(tag, "Starting.")
 	opt := ws281x.DefaultOptions
-	channel := &opt.Channels[0]
-	channel.GpioPin = 18
-	channel.LedCount = 63
-	channel.Brightness = 255
+	opt.Channels[0].GpioPin = 18
+	opt.Channels[0].LedCount = 63
+	opt.Channels[0].Brightness = 255
 
 	var err error
 	strip, err = ws281x.MakeWS2811(&opt)
 	PanicIf(tag, err)
+
+	PanicIf(tag, strip.Init())
 }
 
 func Render(colors []RGB) error {
