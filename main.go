@@ -13,23 +13,9 @@ import (
 	"github.com/EliasStar/DashD/server"
 )
 
-var wg sync.WaitGroup
-
 func main() {
-	run()
-	wg.Wait()
-}
-
-func run() {
-	defer func() {
-		server.Destroy()
-		display.Destroy()
-		lighting.Destroy()
-		screen.Destroy()
-	}()
-
-	sigChan := make(chan os.Signal, 3)
-	signal.Notify(sigChan, syscall.SIGINT, syscall.SIGQUIT, syscall.SIGTERM)
+	signalChannel := make(chan os.Signal, 2)
+	signal.Notify(signalChannel, syscall.SIGINT, syscall.SIGTERM)
 
 	flag.CommandLine.SetOutput(os.Stdout)
 	flag.CommandLine.Init("DashD", flag.ExitOnError)
@@ -43,9 +29,11 @@ func run() {
 
 	flag.Parse()
 
+	var wg sync.WaitGroup
+
 	go func() {
 		wg.Add(1)
-		display.Init(*displayWidth, *displayHeight)
+		display.Create(*displayWidth, *displayHeight)
 		wg.Done()
 	}()
 
@@ -61,5 +49,12 @@ func run() {
 		wg.Done()
 	}()
 
-	<-sigChan
+	<-signalChannel
+
+	server.Destroy()
+	display.Destroy()
+	lighting.Destroy()
+	screen.Destroy()
+
+	wg.Wait()
 }

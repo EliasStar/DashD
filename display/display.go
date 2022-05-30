@@ -10,8 +10,12 @@ const tag = "Display"
 var window webview.WebView
 var stopChannel = make(chan any)
 
-func Init(width, height uint) {
+func init() {
 	Info(tag, "Starting.")
+}
+
+func Create(width, height uint) {
+	Info(tag, "Creating window.")
 
 	for {
 		window = webview.New(false)
