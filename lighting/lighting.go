@@ -49,6 +49,8 @@ func Length() uint {
 
 func Destroy() {
 	Info(tag, "Stopping.")
+	ErrorIf(tag, Render(make([]RGB, Length())))
+	ErrorIf(tag, strip.Wait())
 	strip.Fini()
 }
 

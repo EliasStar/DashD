@@ -81,9 +81,18 @@ func pushButton(btn *gpiod.Line) (err error) {
 
 func Destroy() {
 	Info(tag, "Stopping.")
+	ErrorIf(tag, buttonPower.SetValue(0))
 	ErrorIf(tag, buttonPower.Close())
+
+	ErrorIf(tag, buttonSource.SetValue(0))
 	ErrorIf(tag, buttonSource.Close())
+
+	ErrorIf(tag, buttonMenu.SetValue(0))
 	ErrorIf(tag, buttonMenu.Close())
+
+	ErrorIf(tag, buttonPlus.SetValue(0))
 	ErrorIf(tag, buttonPlus.Close())
+
+	ErrorIf(tag, buttonMinus.SetValue(0))
 	ErrorIf(tag, buttonMinus.Close())
 }
