@@ -9,11 +9,12 @@ const tag = "Lighting"
 
 var strip *ws281x.WS2811
 
-func init() {
+func Init(ledstripPin, ledstripLength uint) {
 	Info(tag, "Starting.")
+
 	opt := ws281x.DefaultOptions
-	opt.Channels[0].GpioPin = 18
-	opt.Channels[0].LedCount = 63
+	opt.Channels[0].GpioPin = int(ledstripPin)
+	opt.Channels[0].LedCount = int(ledstripLength)
 	opt.Channels[0].Brightness = 255
 
 	var err error

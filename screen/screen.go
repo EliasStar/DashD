@@ -5,7 +5,6 @@ import (
 
 	. "github.com/EliasStar/DashD/log"
 	"github.com/warthog618/gpiod"
-	"github.com/warthog618/gpiod/device/rpi"
 )
 
 const tag = "Screen"
@@ -18,25 +17,25 @@ var (
 	buttonMinus  *gpiod.Line
 )
 
-func init() {
+func Init(powerPin, sourcePin, menuPin, plusPin, minusPin uint) {
 	Info(tag, "Starting.")
 
 	var err error
 	options := []gpiod.LineReqOption{gpiod.WithConsumer("DashD"), gpiod.AsOutput(), gpiod.WithBiasDisabled}
 
-	buttonPower, err = gpiod.RequestLine("gpiochip0", rpi.GPIO17, options...)
+	buttonPower, err = gpiod.RequestLine("gpiochip0", int(powerPin), options...)
 	PanicIf(tag, err)
 
-	buttonSource, err = gpiod.RequestLine("gpiochip0", rpi.GPIO24, options...)
+	buttonSource, err = gpiod.RequestLine("gpiochip0", int(sourcePin), options...)
 	PanicIf(tag, err)
 
-	buttonMenu, err = gpiod.RequestLine("gpiochip0", rpi.GPIO27, options...)
+	buttonMenu, err = gpiod.RequestLine("gpiochip0", int(menuPin), options...)
 	PanicIf(tag, err)
 
-	buttonPlus, err = gpiod.RequestLine("gpiochip0", rpi.GPIO22, options...)
+	buttonPlus, err = gpiod.RequestLine("gpiochip0", int(plusPin), options...)
 	PanicIf(tag, err)
 
-	buttonMinus, err = gpiod.RequestLine("gpiochip0", rpi.GPIO23, options...)
+	buttonMinus, err = gpiod.RequestLine("gpiochip0", int(minusPin), options...)
 	PanicIf(tag, err)
 }
 
