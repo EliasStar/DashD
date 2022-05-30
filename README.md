@@ -1,6 +1,12 @@
 # DashD
 lightweight daemon for raspberry pi driven kiosks
 
+## Features
+  - software control for screen buttons (power, source, menu, plus, minus)
+  - lighting integration with Artemis-RGB (udp)
+  - website display using webkit
+  - control via http server
+
 ## License
 DashD - Lightweight daemon for Raspberry Pi driven kiosks
 Copyright (C) 2022 Elias*
