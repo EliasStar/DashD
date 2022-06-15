@@ -10,46 +10,89 @@
 ### Display
 On startup DashD will create a single WebKitGTK window with the specified size, which can be resized later. If the window is closed, DashD will open a new window, however any previously shown website will be lost.
 
-| Command Line Flag | Default Value | Unit  |
-| :---------------: | :-----------: | :---: |
-|  `display_width`  |     1024      | Pixel |
-| `display_height`  |      768      | Pixel |
+|     CLI Flag     | Default | Unit  |
+| :--------------: | :-----: | :---: |
+| `display_width`  |  1024   | Pixel |
+| `display_height` |   768   | Pixel |
 
 ### Lighting
 DashD can drive a single addressable LED strip with WS281X LEDs (any GRB LEDs should work). On most Raspberry Pi GPIO 12, 18, 40, and 52 can be used for connecting the data line of the LED strip. However if you are using Model B+, 2B or 3B only GPIO 12 and 18 are supported due to a hardware limitation.
 
-| Command Line Flag | Default Value | Unit  |
-| :---------------: | :-----------: | :---: |
-|  `ledstrip_pin`   |      18       | GPIO  |
-| `ledstrip_length` |      62       | Count |
+|     CLI Flag      | Default | Unit  |
+| :---------------: | :-----: | :---: |
+|  `ledstrip_pin`   |   18    | GPIO  |
+| `ledstrip_length` |   62    | Count |
 
 ### Screen
 DashD virtualizes the buttons of the screen, so they can be remote controlled via the HTTP server. The GPIOs should be connected to transistors in a way that a high output corresponds to pressing down the button.
 
-| Command Line Flag | Default Value | Unit  |
-| :---------------: | :-----------: | :---: |
-|    `power_pin`    |      17       | GPIO  |
-|   `source_pin`    |      24       | GPIO  |
-|    `menu_pin`     |      27       | GPIO  |
-|    `plus_pin`     |      22       | GPIO  |
-|    `minus_pin`    |      23       | GPIO  |
+|   CLI Flag   | Default | Unit  |
+| :----------: | :-----: | :---: |
+| `power_pin`  |   17    | GPIO  |
+| `source_pin` |   24    | GPIO  |
+|  `menu_pin`  |   27    | GPIO  |
+|  `plus_pin`  |   22    | GPIO  |
+| `minus_pin`  |   23    | GPIO  |
 
 ### Server
 On startup DashD will start a HTTP server on the specified port, which serves a basic web interface. It allows the user to change the website shown, resize the window, configure the lighting and press the virtual screen buttons.
 
-| Command Line Flag | Default Value | Unit  |
-| :---------------: | :-----------: | :---: |
-|    `http_port`    |      80       | Port  |
-|    `udp_port`     |     1872      | Port  |
+|  CLI Flag   | Default | Unit  |
+| :---------: | :-----: | :---: |
+| `http_port` |   80    | Port  |
+| `udp_port`  |  1872   | Port  |
 
 ## Installation
 Download the latest release from [GitHub Releases](https://github.com/EliasStar/DashD/releases/latest). Then run the following commands in the directory where you downloaded DashD:
-``` shell
+``` sh
 sudo apt-get update
 sudo apt-get install gtk-3 webkit2gtk-4.0
 sudo mv DashD /usr/local/sbin/dashd
 sudo chmod +x /usr/local/sbin/dashd
 ```
+
+## Usage
+One possible way to use DashD is to run it on startup with systemd and xinit as basic display manager. To use this configuration install xinit like so:
+``` sh
+sudo apt-get update
+sudo apt-get install xserver-xorg xfonts-base xinit
+```
+
+Then put the following in `/etc/X11/xinit/xinitrc`:
+``` sh
+#!/bin/bash
+
+/usr/local/sbin/dashd &> /var/log/DashD.log
+```
+
+Make a new systemd unit for xinit at `/etc/systemd/system/xinit.service` with this content:
+``` systemd-unit
+[Unit]
+Description=Xinit display manager using startx
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/startx
+Restart=always
+
+[Install]
+Alias=display-manager.service
+```
+
+Finally enable the service, switch to the `graphical` target and reboot. The logs will be put in `/var/log/DashD.log`.
+``` sh
+sudo systemctl enable xinit.service
+sudo systemctl set-default graphical.target
+sudo reboot
+```
+
+## Building
+DashD utilizes Docker to cross-compile for the Raspberry Pi. The Dockerfile in this repository creates an image that can be used to build DashD.
+To build the docker image run `docker build -t dashd_builder .` in the root directory of this repository. Then run `docker run --rm --volume $(pwd):/app dashd_builder` to build DashD. The binary is located at `build/DashD`.
+
+## HTTP API
+
+## UDP Lighting Protocol
 
 ## License
 DashD - Lightweight daemon for Raspberry Pi driven kiosks <br>
