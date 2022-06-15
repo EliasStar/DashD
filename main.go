@@ -21,17 +21,17 @@ func main() {
 	flag.CommandLine.Init("DashD", flag.ExitOnError)
 	flag.CommandLine.Usage = nil
 
+	displayWidth := flag.Uint("display_width", 1024, "width of the display")
+	displayHeight := flag.Uint("display_height", 768, "height of the display")
+
+	ledstripPin := flag.Uint("ledstrip_pin", 18, "width of the display")
+	ledstripLength := flag.Uint("ledstrip_length", 62, "height of the display")
+
 	powerPin := flag.Uint("power_pin", 17, "width of the display")
 	sourcePin := flag.Uint("source_pin", 24, "height of the display")
 	menuPin := flag.Uint("menu_pin", 27, "width of the display")
 	plusPin := flag.Uint("plus_pin", 22, "height of the display")
 	minusPin := flag.Uint("minus_pin", 23, "height of the display")
-
-	ledstripPin := flag.Uint("ledstrip_pin", 18, "width of the display")
-	ledstripLength := flag.Uint("ledstrip_length", 62, "height of the display")
-
-	displayWidth := flag.Uint("display_width", 1024, "width of the display")
-	displayHeight := flag.Uint("display_height", 768, "height of the display")
 
 	httpPort := flag.Uint("http_port", 80, "port used by the http server")
 	udpPort := flag.Uint("udp_port", 1872, "port used by the lighting socket")
