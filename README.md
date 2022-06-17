@@ -96,19 +96,19 @@ To build the docker image run `docker build -t dashd_builder .` in the root dire
 ## HTTP API
 The endpoints ignore the HTTP method used, however POST is recommended for all, except `/` and `/config`, which should be used with GET.
 
-|  Endpoint  |    Parameters    | Description              |
-| :--------: | :--------------: | :----------------------- |
-|    `/`     |                  |                          |
-| `/display` |      `url`       |                          |
-| `/resize`  | `width` `height` |                          |
-| `/config`  |                  |                          |
-| `/update`  |     `base64`     |                          |
-|  `/reset`  |                  |                          |
-|  `/power`  |                  | Toggle the power button  |
-| `/source`  |                  | Toggle the source button |
-|  `/menu`   |                  | Toggle the menu button   |
-|  `/plus`   |                  | Toggle the plus button   |
-|  `/minus`  |                  | Toggle the minus button  |
+|   Endpoint | Description                             |          Parameters | Parameter Description                                                                                          |
+| ---------: | :-------------------------------------- | ------------------: | :------------------------------------------------------------------------------------------------------------- |
+|        `/` | Get the web interface                   |                     |                                                                                                                |
+| `/display` | Set the website to be displayed         |               `url` | the URL of the website as a percent-encoded string<br>data URLs are also supported                             |
+|  `/resize` | Set the window size                     | `width`<br>`height` | the width in pixel<br>the height in pixel                                                                      |
+|  `/config` | Get the LED count in JSON (Artemis API) |                     |                                                                                                                |
+|  `/update` | Set colors of LED strip (Artemis API)   |            `base64` | a UDP packet (described below) as a base64 encoded string<br>name is not enforced; must be the first parameter |
+|   `/reset` | Set all LEDs to black (Artemis API)     |                     |                                                                                                                |
+|   `/power` | Toggle the power button                 |                     |                                                                                                                |
+|  `/source` | Toggle the source button                |                     |                                                                                                                |
+|    `/menu` | Toggle the menu button                  |                     |                                                                                                                |
+|    `/plus` | Toggle the plus button                  |                     |                                                                                                                |
+|   `/minus` | Toggle the minus button                 |                     |                                                                                                                |
 
 
 ## UDP Lighting Protocol
