@@ -35,21 +35,23 @@ DashD virtualizes the buttons of the screen, so they can be remote controlled vi
 | `minus_pin`  |   23    | GPIO  |
 
 ### Server
-On startup DashD will start a HTTP server on the specified port, which serves a basic web interface. It allows the user to change the website shown, resize the window, configure the lighting and press the virtual screen buttons.
+On startup DashD will start a HTTP server on the specified port, which serves a basic web interface. It allows the user to change the website shown, resize the window, configure the lighting and press the virtual screen buttons. DashD will also listen for UDP packets on the specified port, which can be used to control the lighting with [Artemis-RGB](https://github.com/Artemis-RGB/Artemis) or any compatible program that supports the Artemis Lighting Protocol.
 
 |  CLI Flag   | Default | Unit  |
 | :---------: | :-----: | :---: |
 | `http_port` |   80    | Port  |
 | `udp_port`  |  1872   | Port  |
 
+
 ## Installation
 Download the latest release from [GitHub Releases](https://github.com/EliasStar/DashD/releases/latest). Then run the following commands in the directory where you downloaded DashD:
 ``` sh
 sudo apt-get update
-sudo apt-get install gtk-3 webkit2gtk-4.0
+sudo apt-get install gtk-3.0 webkit2gtk-4.0
 sudo mv DashD /usr/local/sbin/dashd
 sudo chmod +x /usr/local/sbin/dashd
 ```
+
 
 ## Usage
 One possible way to use DashD is to run it on startup with systemd and xinit as basic display manager. To use this configuration install xinit like so:
@@ -90,9 +92,28 @@ sudo reboot
 DashD utilizes Docker to cross-compile for the Raspberry Pi. The Dockerfile in this repository creates an image that can be used to build DashD.
 To build the docker image run `docker build -t dashd_builder .` in the root directory of this repository. Then run `docker run --rm --volume $(pwd):/app dashd_builder` to build DashD. The binary is located at `build/DashD`.
 
+
 ## HTTP API
+The endpoints ignore the HTTP method used, however POST is recommended for all, except `/` and `/config`, which should be used with GET.
+
+|  Endpoint  |    Parameters    | Description              |
+| :--------: | :--------------: | :----------------------- |
+|    `/`     |                  |                          |
+| `/display` |      `url`       |                          |
+| `/resize`  | `width` `height` |                          |
+| `/config`  |                  |                          |
+| `/update`  |     `base64`     |                          |
+|  `/reset`  |                  |                          |
+|  `/power`  |                  | Toggle the power button  |
+| `/source`  |                  | Toggle the source button |
+|  `/menu`   |                  | Toggle the menu button   |
+|  `/plus`   |                  | Toggle the plus button   |
+|  `/minus`  |                  | Toggle the minus button  |
+
 
 ## UDP Lighting Protocol
+Each UDP packet contains a single frame of lighting data. The first byte is the sequence number which is used for basic packet ordering and must be incremented with each request. The second byte is the channel number which is ignored by DashD because it supports only a single channel. The remaining packet consists of byte triplets which represent the RGB value in that order. The number of byte triplets does not need to be equal to the number of LEDs. Any extra bytes are ignored and LEDs not contained in the packet retain their color. To calculate the length of a packet that sets all LEDs use: `2 + (leds * 3)`.
+
 
 ## License
 DashD - Lightweight daemon for Raspberry Pi driven kiosks <br>
