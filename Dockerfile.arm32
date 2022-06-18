@@ -1,0 +1,32 @@
+FROM golang:1.18-bullseye
+
+RUN dpkg --add-architecture armhf
+
+RUN apt-get update -y
+RUN apt-get install -y cmake git
+RUN apt-get install -y gcc-arm-linux-gnueabihf:amd64 g++-arm-linux-gnueabihf:amd64 libgtk-3-dev:armhf libwebkit2gtk-4.0-dev:armhf
+
+WORKDIR /dashd/lib
+RUN git clone https://github.com/jgarff/rpi_ws281x.git
+
+WORKDIR /dashd/lib/rpi_ws281x/build/
+RUN cmake \
+    -D BUILD_SHARED=OFF \
+    -D BUILD_TEST=OFF \
+    -D CMAKE_C_COMPILER:STRING="arm-linux-gnueabihf-gcc" \
+    -D CMAKE_CXX_COMPILER:STRING="arm-linux-gnueabihf-g++" \
+    -D CMAKE_C_FLAGS:STRING="-marm -march=armv6 -mfloat-abi=hard -mfpu=vfp" \
+    -D CMAKE_CXX_FLAGS:STRING="-marm -march=armv6 -mfloat-abi=hard -mfpu=vfp" \
+    ..
+RUN cmake --build .
+RUN make install
+
+ENV GOOS=linux GOARCH=arm GOARM=6
+ENV CGO_ENABLED=1 PKG_CONFIG_PATH="/usr/lib/arm-linux-gnueabihf/pkgconfig:${PKG_CONFIG_PATH}"
+ENV CC=arm-linux-gnueabihf-gcc CGO_CFLAGS="-marm -march=armv6 -mfloat-abi=hard -mfpu=vfp"
+ENV CXX=arm-linux-gnueabihf-g++ CGO_CPPFLAGS="-marm -march=armv6 -mfloat-abi=hard -mfpu=vfp"
+
+VOLUME /dashd/app
+
+WORKDIR /dashd/app
+ENTRYPOINT go build -o=build/DashD.arm32 ./

@@ -2,17 +2,37 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "Build Container",
+            "label": "Build Container (arm32)",
             "type": "shell",
-            "command": "docker build -t dashd_builder ${workspaceFolder}",
+            "command": "docker build -t dashd_builder:arm32 -f ${workspaceFolder}/Dockerfile.arm32  ${workspaceFolder}",
             "group": {
                 "kind": "build",
             }
         },
         {
-            "label": "Build App",
+            "label": "Build Container (arm64)",
             "type": "shell",
-            "command": "docker run --rm --volume ${workspaceFolder}:/app dashd_builder",
+            "command": "docker build -t dashd_builder:arm64 -f ${workspaceFolder}/Dockerfile.arm64  ${workspaceFolder}",
+            "group": {
+                "kind": "build",
+            }
+        },
+        {
+            "label": "Build DashD (arm32)",
+            "type": "shell",
+            "command": "docker run --rm --volume ${workspaceFolder}:/dashd/app dashd_builder:arm32",
+            "problemMatcher": [
+                "$go"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "Build DashD (arm64)",
+            "type": "shell",
+            "command": "docker run --rm --volume ${workspaceFolder}:/dashd/app dashd_builder:arm64",
             "problemMatcher": [
                 "$go"
             ],
