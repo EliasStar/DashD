@@ -116,7 +116,7 @@ Each UDP packet contains a single frame of lighting data. The first byte is the 
 
 
 ## License
-DashD - Lightweight daemon for Raspberry Pi driven kiosks <br>
+DashD - Lightweight daemon for Raspberry Pi driven kiosks<br>
 Copyright (C) 2022 Elias*
 
 This program is free software: you can redistribute it and/or modify
