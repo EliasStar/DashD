@@ -16,12 +16,8 @@ github.com/stretchr/testify v1.4.0 h1:2E4SXV/wtOkTonXsotYi4li6zVWxYlZuYNCXe9XRJy
 github.com/stretchr/testify v1.4.0/go.mod h1:j7eGeouHqKxXV5pUuKE4zz7dFj8WfuZ+81PSLYec5m4=
 github.com/warthog618/gpiod v0.8.0 h1:qxH9XVvWHpTxzWFSndBcujFyNH5zVRzHM63tcmm85o4=
 github.com/warthog618/gpiod v0.8.0/go.mod h1:a7Csa+IJtDBZ39++zC/6Srjo01qWejt/5velrDWuNkY=
-github.com/webview/webview v0.0.0-20220524171043-5ad20b92dcba h1:AljZVgAmw6nGgEdLmey4p79qgF10lub3KVJ4D/yc3Rc=
-github.com/webview/webview v0.0.0-20220524171043-5ad20b92dcba/go.mod h1:rpXAuuHgyEJb6kXcXldlkOjU6y4x+YcASKKXJNUhh0Y=
 github.com/webview/webview v0.0.0-20220613032649-1df219123fb2 h1:PtGDbjNFrxetvl0ffPVjN0xEzqiI4yWizm4kRBCLHhc=
 github.com/webview/webview v0.0.0-20220613032649-1df219123fb2/go.mod h1:rpXAuuHgyEJb6kXcXldlkOjU6y4x+YcASKKXJNUhh0Y=
-golang.org/x/sys v0.0.0-20220520151302-bc2c85ada10a h1:dGzPydgVsqGcTRVwiLJ1jVbufYwmzD3LfVPLKsKg+0k=
-golang.org/x/sys v0.0.0-20220520151302-bc2c85ada10a/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
 golang.org/x/sys v0.0.0-20220615213510-4f61da869c0c h1:aFV+BgZ4svzjfabn8ERpuB4JI4N6/rdy1iusx77G3oU=
 golang.org/x/sys v0.0.0-20220615213510-4f61da869c0c/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
 gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
