@@ -23,6 +23,7 @@ func main() {
 
 	displayWidth := flag.Uint("display_width", 1024, "width of the display")
 	displayHeight := flag.Uint("display_height", 768, "height of the display")
+	displayUrl := flag.String("display_url", "data:text/html;base64,PGgxPkRhc2hEPC9oMT4KPHA+TGlnaHR3ZWlnaHQgZGFlbW9uIGZvciBSYXNwYmVycnkgUGkgZHJpdmVuIGtpb3NrczwvcD4=", "initial website to load")
 
 	ledstripPin := flag.Uint("ledstrip_pin", 18, "width of the display")
 	ledstripLength := flag.Uint("ledstrip_length", 62, "height of the display")
@@ -40,7 +41,7 @@ func main() {
 
 	screen.Init(*powerPin, *sourcePin, *menuPin, *plusPin, *minusPin)
 	lighting.Init(*ledstripPin, *ledstripLength)
-	display.Init(*displayWidth, *displayHeight)
+	display.Init(*displayWidth, *displayHeight, *displayUrl)
 
 	var wg sync.WaitGroup
 

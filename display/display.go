@@ -11,7 +11,7 @@ var window webview.WebView
 var stopChannel = make(chan any)
 var returnChannel = make(chan any)
 
-func Init(width, height uint) {
+func Init(width, height uint, url string) {
 	Info(tag, "Starting.")
 
 	go func() {
@@ -19,6 +19,7 @@ func Init(width, height uint) {
 			window = webview.New(false)
 			window.SetTitle("DashD")
 			window.SetSize(int(width), int(height), webview.Hint(webview.HintNone))
+			window.Navigate(url)
 
 			window.Run()
 			window.Destroy()

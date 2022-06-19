@@ -14,6 +14,7 @@ On startup DashD will create a single WebKitGTK window with the specified size, 
 | :--------------: | :-----: | :---: |
 | `display_width`  |  1024   | Pixel |
 | `display_height` |   768   | Pixel |
+|  `display_url`   |         |  URL  |
 
 ### Lighting
 DashD can drive a single addressable LED strip with WS281X LEDs (any GRB LEDs should work). On most Raspberry Pi GPIO 12, 18, 40, and 52 can be used for connecting the data line of the LED strip. However if you are using Model B+, 2B or 3B only GPIO 12 and 18 are supported due to a hardware limitation.
@@ -44,7 +45,7 @@ On startup DashD will start a HTTP server on the specified port, which serves a 
 
 
 ## Installation
-Download the latest release from [GitHub Releases](https://github.com/EliasStar/DashD/releases/latest). Then run the following commands in the directory where you downloaded DashD:
+Download the latest release from [GitHub Releases](https://github.com/EliasStar/DashD/releases/latest) for your platform and remove the file extension. Then run the following commands in the directory where you downloaded DashD:
 ``` sh
 sudo apt-get update
 sudo apt-get install gtk-3.0 webkit2gtk-4.0
