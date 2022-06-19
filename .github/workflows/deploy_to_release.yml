@@ -1,8 +1,7 @@
 name: Deploy to GitHub Releases
 on:
   release:
-    types: 
-      - created
+    types: [ published ]
 
 jobs:
   build:
@@ -18,6 +17,7 @@ jobs:
           tags: dashd_builder:arm32
           cache-from: type=gha
           cache-to: type=gha,mode=max
+          load: true
 
       - name: Build Container (arm64)
         uses: docker/build-push-action@v3
@@ -26,6 +26,7 @@ jobs:
           tags: dashd_builder:arm64
           cache-from: type=gha
           cache-to: type=gha,mode=max
+          load: true
 
       - name: Checkout Repository
         uses: actions/checkout@v3
