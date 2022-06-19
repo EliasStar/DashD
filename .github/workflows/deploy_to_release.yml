@@ -1,7 +1,8 @@
 name: Deploy to GitHub Releases
 on:
   release:
-    types: [created]
+    types: 
+      - created
 
 jobs:
   build:
