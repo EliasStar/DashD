@@ -1,4 +1,4 @@
-name: Deploy to GitHub Releases (arm32)
+name: Deploy to GitHub Releases
 on:
   release:
     types: [published]
@@ -11,29 +11,16 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Setup BuildKit
-        id: buildx
         uses: docker/setup-buildx-action@v2
-
-      - name: Cache Docker Layers
-        uses: actions/cache@v3
-        with:
-          path: /tmp/.buildx-cache
-          key: arm32-buildx-cache
 
       - name: Build Container (arm32)
         uses: docker/build-push-action@v3
         with:
           file: Dockerfile.arm32
           tags: dashd_builder:arm32
-          cache-from: type=local,src=/tmp/.buildx-cache
-          cache-to: type=local,dest=/tmp/.buildx-cache-new
-          builder: ${{ steps.buildx.outputs.name }}
+          cache-from: type=gha
+          cache-to: type=gha
           load: true
-
-      - name: Update Cache
-        run: |
-          rm -rf /tmp/.buildx-cache
-          mv /tmp/.buildx-cache-new /tmp/.buildx-cache
 
       - name: Build DashD (arm32)
         run: docker run --rm --volume ${{github.workspace}}:/dashd/app dashd_builder:arm32
@@ -51,29 +38,16 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Setup BuildKit
-        id: buildx
         uses: docker/setup-buildx-action@v2
-
-      - name: Cache Docker Layers
-        uses: actions/cache@v3
-        with:
-          path: /tmp/.buildx-cache
-          key: arm64-buildx-cache
 
       - name: Build Container (arm64)
         uses: docker/build-push-action@v3
         with:
           file: Dockerfile.arm64
           tags: dashd_builder:arm64
-          cache-from: type=local,src=/tmp/.buildx-cache
-          cache-to: type=local,dest=/tmp/.buildx-cache-new
-          builder: ${{ steps.buildx.outputs.name }}
+          cache-from: type=gha
+          cache-to: type=gha
           load: true
-
-      - name: Update Cache
-        run: |
-          rm -rf /tmp/.buildx-cache
-          mv /tmp/.buildx-cache-new /tmp/.buildx-cache
 
       - name: Build DashD (arm64)
         run: docker run --rm --volume ${{github.workspace}}:/dashd/app dashd_builder:arm64

@@ -1,0 +1,33 @@
+name: Build and Cache Containers
+on:
+  push:
+    branches: [main]
+
+jobs:
+  arm32:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup BuildKit
+        uses: docker/setup-buildx-action@v2
+
+      - name: Build Container (arm32)
+        uses: docker/build-push-action@v3
+        with:
+          file: Dockerfile.arm32
+          tags: dashd_builder:arm32
+          cache-from: type=gha
+          cache-to: type=gha
+
+  arm64:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup BuildKit
+        uses: docker/setup-buildx-action@v2
+
+      - name: Build Container (arm64)
+        uses: docker/build-push-action@v3
+        with:
+          file: Dockerfile.arm64
+          tags: dashd_builder:arm64
+          cache-from: type=gha
+          cache-to: type=gha
