@@ -10,13 +10,22 @@ jobs:
       - name: Setup BuildKit
         uses: docker/setup-buildx-action@v2
 
+      - name: Cache Docker Layers
+        uses: actions/cache@v3
+        with:
+          path: /tmp/.buildx-cache
+          key: buildx-cache-arm32-${{ hashFiles('Dockerfile.arm32') }}
+
       - name: Build Container (arm32)
         uses: docker/build-push-action@v3
         with:
           file: Dockerfile.arm32
           tags: dashd_builder:arm32
-          cache-from: type=gha
-          cache-to: type=gha
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
+
+      - name: Update Cache
+        run: rm -rf /tmp/.buildx-cache && mv /tmp/.buildx-cache-new /tmp/.buildx-cache
 
   arm64:
     runs-on: ubuntu-latest
@@ -24,10 +33,19 @@ jobs:
       - name: Setup BuildKit
         uses: docker/setup-buildx-action@v2
 
+      - name: Cache Docker Layers
+        uses: actions/cache@v3
+        with:
+          path: /tmp/.buildx-cache
+          key: buildx-cache-arm64-${{ hashFiles('Dockerfile.arm64') }}
+
       - name: Build Container (arm64)
         uses: docker/build-push-action@v3
         with:
           file: Dockerfile.arm64
           tags: dashd_builder:arm64
-          cache-from: type=gha
-          cache-to: type=gha
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
+
+      - name: Update Cache
+        run: rm -rf /tmp/.buildx-cache && mv /tmp/.buildx-cache-new /tmp/.buildx-cache
