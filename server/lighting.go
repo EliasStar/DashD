@@ -1,4 +1,4 @@
-package handlers
+package server
 
 import (
 	"encoding/base64"
@@ -11,7 +11,7 @@ import (
 	. "github.com/EliasStar/DashD/log"
 )
 
-func HandleConfig(w http.ResponseWriter, r *http.Request) {
+func handleConfig(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 
 	type channel struct {
@@ -28,7 +28,7 @@ func HandleConfig(w http.ResponseWriter, r *http.Request) {
 	}))
 }
 
-func HandleUpdate(w http.ResponseWriter, r *http.Request) {
+func handleUpdate(w http.ResponseWriter, r *http.Request) {
 	if r.ParseForm() != nil {
 		http.Error(w, "Bad Request", http.StatusBadRequest)
 		return
@@ -65,7 +65,7 @@ func HandleUpdate(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
-func HandleReset(w http.ResponseWriter, r *http.Request) {
+func handleReset(w http.ResponseWriter, r *http.Request) {
 	lighting.Render(make([]lighting.RGB, lighting.Length()))
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }

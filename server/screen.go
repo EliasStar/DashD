@@ -1,4 +1,4 @@
-package handlers
+package server
 
 import (
 	"net/http"
@@ -6,27 +6,27 @@ import (
 	"github.com/EliasStar/DashD/screen"
 )
 
-func HandlePower(w http.ResponseWriter, r *http.Request) {
+func handlePower(w http.ResponseWriter, r *http.Request) {
 	screen.PushPowerButton()
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
-func HandleSource(w http.ResponseWriter, r *http.Request) {
+func handleSource(w http.ResponseWriter, r *http.Request) {
 	screen.PushSourceButton()
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
-func HandleMenu(w http.ResponseWriter, r *http.Request) {
+func handleMenu(w http.ResponseWriter, r *http.Request) {
 	screen.PushMenuButton()
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
-func HandlePlus(w http.ResponseWriter, r *http.Request) {
+func handlePlus(w http.ResponseWriter, r *http.Request) {
 	screen.PushPlusButton()
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
-func HandleMinus(w http.ResponseWriter, r *http.Request) {
+func handleMinus(w http.ResponseWriter, r *http.Request) {
 	screen.PushMinusButton()
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }

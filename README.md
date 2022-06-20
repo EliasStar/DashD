@@ -10,38 +10,47 @@
 ### Display
 On startup DashD will create a single WebKitGTK window with the specified size, which can be resized later. If the window is closed, DashD will open a new window, however any previously shown website will be lost.
 
-|     CLI Flag     | Default | Unit  |
-| :--------------: | :-----: | :---: |
-| `display_width`  |  1024   | Pixel |
-| `display_height` |   768   | Pixel |
-|  `display_url`   |         |  URL  |
+|     CLI Flag      | Default | Unit  |
+| :---------------: | :-----: | :---: |
+| `display_enabled` |  true   | Bool  |
+|  `window_width`   |  1024   | Pixel |
+|  `window_height`  |   768   | Pixel |
+|   `default_url`   |         |  URL  |
 
 ### Lighting
 DashD can drive a single addressable LED strip with WS281X LEDs (any GRB LEDs should work). On most Raspberry Pi GPIO 12, 18, 40, and 52 can be used for connecting the data line of the LED strip. However if you are using Model B+, 2B or 3B only GPIO 12 and 18 are supported due to a hardware limitation.
 
-|     CLI Flag      | Default | Unit  |
-| :---------------: | :-----: | :---: |
-|  `ledstrip_pin`   |   18    | GPIO  |
-| `ledstrip_length` |   62    | Count |
+|      CLI Flag      | Default | Unit  |
+| :----------------: | :-----: | :---: |
+| `lighting_enabled` |  true   | Bool  |
+|   `ledstrip_pin`   |   18    | GPIO  |
+| `ledstrip_length`  |   62    | Count |
 
 ### Screen
 DashD virtualizes the buttons of the screen, so they can be remote controlled via the HTTP server. The GPIOs should be connected to transistors in a way that a high output corresponds to pressing down the button.
 
-|   CLI Flag   | Default | Unit  |
-| :----------: | :-----: | :---: |
-| `power_pin`  |   17    | GPIO  |
-| `source_pin` |   24    | GPIO  |
-|  `menu_pin`  |   27    | GPIO  |
-|  `plus_pin`  |   22    | GPIO  |
-| `minus_pin`  |   23    | GPIO  |
+|     CLI Flag     | Default | Unit  |
+| :--------------: | :-----: | :---: |
+| `screen_enabled` |  true   | Bool  |
+|   `power_pin`    |   17    | GPIO  |
+|   `source_pin`   |   24    | GPIO  |
+|    `menu_pin`    |   27    | GPIO  |
+|    `plus_pin`    |   22    | GPIO  |
+|   `minus_pin`    |   23    | GPIO  |
 
 ### Server
-On startup DashD will start a HTTP server on the specified port, which serves a basic web interface. It allows the user to change the website shown, resize the window, configure the lighting and press the virtual screen buttons. DashD will also listen for UDP packets on the specified port, which can be used to control the lighting with [Artemis-RGB](https://github.com/Artemis-RGB/Artemis) or any compatible program that supports the Artemis Lighting Protocol.
+On startup DashD will start a HTTP server on the specified port, which serves a basic web interface. It allows the user to change the website shown, resize the window, configure the lighting and press the virtual screen buttons, if those modules are enabled.
 
 |  CLI Flag   | Default | Unit  |
 | :---------: | :-----: | :---: |
 | `http_port` |   80    | Port  |
-| `udp_port`  |  1872   | Port  |
+
+### Socket
+DashD will listen for UDP packets on the specified port, which can be used to control the lighting with [Artemis-RGB](https://github.com/Artemis-RGB/Artemis) or any compatible program that supports the Artemis Lighting Protocol. If lighting is disabled, this module will be disabled.
+
+|  CLI Flag  | Default | Unit  |
+| :--------: | :-----: | :---: |
+| `udp_port` |  1872   | Port  |
 
 
 ## Installation

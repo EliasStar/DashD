@@ -1,4 +1,4 @@
-package handlers
+package server
 
 import (
 	"net/http"
@@ -7,7 +7,7 @@ import (
 	"github.com/EliasStar/DashD/display"
 )
 
-func HandleDisplay(w http.ResponseWriter, r *http.Request) {
+func handleDisplay(w http.ResponseWriter, r *http.Request) {
 	if r.ParseForm() != nil {
 		http.Error(w, "Bad Request", http.StatusBadRequest)
 		return
@@ -20,7 +20,7 @@ func HandleDisplay(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
-func HandleResize(w http.ResponseWriter, r *http.Request) {
+func handleResize(w http.ResponseWriter, r *http.Request) {
 	if r.ParseForm() != nil {
 		http.Error(w, "Bad Request", http.StatusBadRequest)
 		return
