@@ -25,14 +25,14 @@ func main() {
 	displayHeight := flag.Uint("display_height", 768, "height of the display")
 	displayUrl := flag.String("display_url", "data:text/html;base64,PGgxPkRhc2hEPC9oMT4KPHA+TGlnaHR3ZWlnaHQgZGFlbW9uIGZvciBSYXNwYmVycnkgUGkgZHJpdmVuIGtpb3NrczwvcD4=", "initial website to load")
 
-	ledstripPin := flag.Uint("ledstrip_pin", 18, "width of the display")
-	ledstripLength := flag.Uint("ledstrip_length", 62, "height of the display")
+	ledstripPin := flag.Uint("ledstrip_pin", 18, "pin used for data line of the led strip")
+	ledstripLength := flag.Uint("ledstrip_length", 62, "number of leds in the led strip")
 
-	powerPin := flag.Uint("power_pin", 17, "width of the display")
-	sourcePin := flag.Uint("source_pin", 24, "height of the display")
-	menuPin := flag.Uint("menu_pin", 27, "width of the display")
-	plusPin := flag.Uint("plus_pin", 22, "height of the display")
-	minusPin := flag.Uint("minus_pin", 23, "height of the display")
+	powerPin := flag.Uint("power_pin", 17, "pin connected to the power button of the screen")
+	sourcePin := flag.Uint("source_pin", 24, "pin connected to the source button of the screen")
+	menuPin := flag.Uint("menu_pin", 27, "pin connected to the menu button of the screen")
+	plusPin := flag.Uint("plus_pin", 22, "pin connected to the plus button of the screen")
+	minusPin := flag.Uint("minus_pin", 23, "pin connected to the minus button of the screen")
 
 	httpPort := flag.Uint("http_port", 80, "port used by the http server")
 	udpPort := flag.Uint("udp_port", 1872, "port used by the lighting socket")
