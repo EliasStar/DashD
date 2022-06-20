@@ -4,19 +4,29 @@ on:
     types: [ published ]
 
 jobs:
-  build:
+  deploy_to_release:
     runs-on: ubuntu-latest
     steps:
-      - name: Setup Docker
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+    
+      - name: Setup BuildKit
         uses: docker/setup-buildx-action@v2
+        
+      - name: Cache Docker Layers
+        uses: actions/cache@v3
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: ${{ runner.os }}-buildx-
 
       - name: Build Container (arm32)
         uses: docker/build-push-action@v3
         with:
           file: Dockerfile.arm32
           tags: dashd_builder:arm32
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
           load: true
 
       - name: Build Container (arm64)
@@ -24,12 +34,12 @@ jobs:
         with:
           file: Dockerfile.arm64
           tags: dashd_builder:arm64
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
           load: true
-
-      - name: Checkout Repository
-        uses: actions/checkout@v3
+          
+      - name: Update Cache
+        run: rm -rf /tmp/.buildx-cache && mv /tmp/.buildx-cache-new /tmp/.buildx-cache
 
       - name: Build DashD (arm32)
         run: docker run --rm --volume ${{github.workspace}}:/dashd/app dashd_builder:arm32
