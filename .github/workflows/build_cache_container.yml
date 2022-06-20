@@ -14,7 +14,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: /tmp/.buildx-cache
-          key: buildx-cache-arm32-${{ hashFiles('Dockerfile.arm32') }}
+          key: buildx-cache-arm32
 
       - name: Build Container (arm32)
         uses: docker/build-push-action@v3
@@ -37,7 +37,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: /tmp/.buildx-cache
-          key: buildx-cache-arm64-${{ hashFiles('Dockerfile.arm64') }}
+          key: buildx-cache-arm64
 
       - name: Build Container (arm64)
         uses: docker/build-push-action@v3
