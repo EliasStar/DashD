@@ -1,43 +1,46 @@
 package display
 
 import (
+	"sync"
+
 	. "github.com/EliasStar/DashD/log"
 	"github.com/webview/webview"
 )
 
 const tag = "Display"
 
+var wg sync.WaitGroup
 var window webview.WebView
-var stopChannel = make(chan any)
-var returnChannel = make(chan any)
+
+var currentWidth, currentHeight int
+var currentUrl string
 
 func Init(width, height uint, url string) {
 	Info(tag, "Starting.")
 
-	go func() {
-		for {
-			window = webview.New(false)
-			window.SetTitle("DashD")
-			window.SetSize(int(width), int(height), webview.Hint(webview.HintNone))
-			window.Navigate(url)
+	wg.Add(1)
+	go run()
+}
 
-			window.Run()
-			window.Destroy()
+func run() {
+	window = webview.New(false)
+	window.SetTitle("DashD")
+	window.SetSize(currentWidth, currentHeight, webview.Hint(webview.HintNone))
+	window.Navigate(currentUrl)
 
-			select {
-			case <-stopChannel:
-				close(returnChannel)
-				return
+	window.Dispatch(func() {
+		window.Run()
+		window.Destroy()
+	})
 
-			default:
-				Info(tag, "Restarting.")
-			}
-		}
-	}()
+	wg.Done()
 }
 
 func Show(url string) {
 	Info(tag, "Now showing:", url)
+
+	currentUrl = url
+
 	window.Dispatch(func() {
 		window.Navigate(url)
 	})
@@ -45,14 +48,16 @@ func Show(url string) {
 
 func Resize(width, height uint) {
 	Info(tag, "Changed window size to:", width, "x", height)
+
+	currentWidth, currentHeight = int(width), int(height)
+
 	window.Dispatch(func() {
-		window.SetSize(int(width), int(height), webview.Hint(webview.HintNone))
+		window.SetSize(currentWidth, currentHeight, webview.Hint(webview.HintNone))
 	})
 }
 
 func Destroy() {
 	Info(tag, "Stopping.")
-	close(stopChannel)
 	window.Terminate()
-	<-returnChannel
+	wg.Done()
 }

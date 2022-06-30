@@ -12,14 +12,22 @@ import (
 
 const tag = "Socket"
 
+var wg sync.WaitGroup
 var socket net.PacketConn
 
-func Listen(port uint, wg *sync.WaitGroup) {
-	Info(tag, "Listening on:", port)
+func Init(port uint) {
+	Info(tag, "Starting.")
 
 	var err error
 	socket, err = net.ListenPacket("udp", ":"+strconv.FormatUint(uint64(port), 10))
 	PanicIf(tag, err)
+
+	wg.Add(1)
+	go listen()
+}
+
+func listen() {
+	Info(tag, "Listening on:", socket.LocalAddr())
 
 	var lastIndex uint8
 	rgb := make([]byte, 2+lighting.Length()*3)
@@ -56,7 +64,10 @@ func Listen(port uint, wg *sync.WaitGroup) {
 
 func Destroy() {
 	Info(tag, "Stopping.")
+
 	if socket != nil {
 		ErrorIf(tag, socket.Close())
 	}
+
+	wg.Wait()
 }

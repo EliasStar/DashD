@@ -3,6 +3,7 @@ package server
 import (
 	"context"
 	_ "embed"
+	"net"
 	"net/http"
 	"strconv"
 	"sync"
@@ -12,13 +13,15 @@ import (
 
 const tag = "Server"
 
+var wg sync.WaitGroup
 var server http.Server
-var handler http.ServeMux
 
-func Init(displayEnabled, lightingEnabled, screenEnabled bool) {
+func Init(port uint, displayEnabled, lightingEnabled, screenEnabled bool) {
 	Info(tag, "Starting.")
 	server.SetKeepAlivesEnabled(false)
+	server.Addr = net.JoinHostPort("", strconv.FormatUint(uint64(port), 10))
 
+	var handler http.ServeMux
 	handler.Handle("/", getIndexHandler(displayEnabled, lightingEnabled, screenEnabled))
 
 	if displayEnabled {
@@ -44,12 +47,14 @@ func Init(displayEnabled, lightingEnabled, screenEnabled bool) {
 		Info(tag, r.Method, r.URL.Path)
 		handler.ServeHTTP(w, r)
 	})
+
+	wg.Add(1)
+	go listen()
 }
 
-func Listen(port uint, wg *sync.WaitGroup) {
-	Info(tag, "Listening on:", port)
+func listen() {
+	Info(tag, "Listening on:", server.Addr)
 
-	server.Addr = ":" + strconv.FormatUint(uint64(port), 10)
 	if err := server.ListenAndServe(); err != http.ErrServerClosed {
 		PanicIf(tag, err)
 	}
@@ -59,5 +64,8 @@ func Listen(port uint, wg *sync.WaitGroup) {
 
 func Destroy() {
 	Info(tag, "Stopping.")
+
 	ErrorIf(tag, server.Shutdown(context.Background()))
+
+	wg.Wait()
 }

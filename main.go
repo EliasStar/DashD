@@ -4,7 +4,6 @@ import (
 	"flag"
 	"os"
 	"os/signal"
-	"sync"
 	"syscall"
 
 	"github.com/EliasStar/DashD/display"
@@ -15,25 +14,21 @@ import (
 )
 
 var displayEnabled bool
-var windowWidth uint
-var windowHeight uint
+var windowWidth, windowHeight uint
 var defaultUrl string
 
 var lightingEnabled bool
-var ledstripPin uint
-var ledstripLength uint
+var ledstripPin, ledstripLength uint
 
 var screenEnabled bool
-var powerPin uint
-var sourcePin uint
-var menuPin uint
-var plusPin uint
-var minusPin uint
+var powerPin, sourcePin, menuPin, plusPin, minusPin uint
 
-var httpPort uint
-var udpPort uint
+var serverEnabled bool
+var serverPort uint
 
-var wg = new(sync.WaitGroup)
+var socketEnabled bool
+var socketPort uint
+
 var signalChannel = make(chan os.Signal, 2)
 
 func init() {
@@ -57,8 +52,11 @@ func init() {
 	flag.UintVar(&plusPin, "plus_pin", 22, "pin connected to the plus button of the screen")
 	flag.UintVar(&minusPin, "minus_pin", 23, "pin connected to the minus button of the screen")
 
-	flag.UintVar(&httpPort, "http_port", 80, "port used by the http server")
-	flag.UintVar(&udpPort, "udp_port", 1872, "port used by the lighting socket")
+	flag.BoolVar(&serverEnabled, "server_enabled", true, "Enable server module")
+	flag.UintVar(&serverPort, "server_port", 80, "port used by the http server")
+
+	flag.BoolVar(&socketEnabled, "socket_enabled", true, "Enable socket module")
+	flag.UintVar(&socketPort, "socket_port", 1872, "port used by the lighting socket")
 
 	flag.Parse()
 }
@@ -68,40 +66,28 @@ func main() {
 
 	if displayEnabled {
 		display.Init(windowWidth, windowHeight, defaultUrl)
+		defer display.Destroy()
 	}
 
 	if lightingEnabled {
 		lighting.Init(ledstripPin, ledstripLength)
+		defer lighting.Destroy()
 
-		wg.Add(1)
-		go socket.Listen(udpPort, wg)
+		if socketEnabled {
+			socket.Init(socketPort)
+			defer socket.Destroy()
+		}
 	}
 
 	if screenEnabled {
 		screen.Init(powerPin, sourcePin, menuPin, plusPin, minusPin)
+		defer screen.Destroy()
 	}
 
-	server.Init(displayEnabled, lightingEnabled, screenEnabled)
-
-	wg.Add(1)
-	go server.Listen(httpPort, wg)
+	if serverEnabled {
+		server.Init(serverPort, displayEnabled, lightingEnabled, screenEnabled)
+		defer server.Destroy()
+	}
 
 	<-signalChannel
-
-	server.Destroy()
-
-	if displayEnabled {
-		display.Destroy()
-	}
-
-	if lightingEnabled {
-		lighting.Destroy()
-		socket.Destroy()
-	}
-
-	if screenEnabled {
-		screen.Destroy()
-	}
-
-	wg.Wait()
 }
