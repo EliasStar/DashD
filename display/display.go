@@ -10,6 +10,8 @@ import (
 const tag = "Display"
 
 var wg sync.WaitGroup
+var stopChannel chan any
+
 var window webview.WebView
 
 var currentWidth, currentHeight int
@@ -18,22 +20,42 @@ var currentUrl string
 func Init(width, height uint, url string) {
 	Info(tag, "Starting.")
 
+	stopChannel = make(chan any)
+
+	currentWidth, currentHeight = int(width), int(height)
+	currentUrl = url
+
 	wg.Add(1)
 	go run()
 }
 
 func run() {
-	window = webview.New(false)
-	window.SetTitle("DashD")
-	window.SetSize(currentWidth, currentHeight, webview.Hint(webview.HintNone))
-	window.Navigate(currentUrl)
+	for {
+		done := make(chan any)
+		window = webview.New(false)
 
-	window.Dispatch(func() {
-		window.Run()
-		window.Destroy()
-	})
+		window.SetTitle("DashD")
+		window.SetSize(currentWidth, currentHeight, webview.Hint(webview.HintNone))
+		window.Navigate(currentUrl)
 
-	wg.Done()
+		window.Dispatch(func() {
+			window.Run()
+			window.Destroy()
+
+			close(done)
+		})
+
+		<-done
+
+		select {
+		case <-stopChannel:
+			wg.Done()
+			return
+
+		default:
+			Info(tag, "Restarting.")
+		}
+	}
 }
 
 func Show(url string) {
@@ -42,7 +64,7 @@ func Show(url string) {
 	currentUrl = url
 
 	window.Dispatch(func() {
-		window.Navigate(url)
+		window.Navigate(currentUrl)
 	})
 }
 
@@ -58,6 +80,9 @@ func Resize(width, height uint) {
 
 func Destroy() {
 	Info(tag, "Stopping.")
+
+	close(stopChannel)
 	window.Terminate()
-	wg.Done()
+
+	wg.Wait()
 }
