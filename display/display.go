@@ -25,31 +25,29 @@ func Init(width, height uint, url string) {
 	currentWidth, currentHeight = int(width), int(height)
 	currentUrl = url
 
-	wg.Add(1)
 	go run()
 }
 
 func run() {
 	for {
-		done := make(chan any)
 		window = webview.New(false)
 
-		window.SetTitle("DashD")
-		window.SetSize(currentWidth, currentHeight, webview.Hint(webview.HintNone))
-		window.Navigate(currentUrl)
-
+		wg.Add(1)
 		window.Dispatch(func() {
+			window.SetTitle("DashD")
+			window.SetSize(currentWidth, currentHeight, webview.Hint(webview.HintNone))
+			window.Navigate(currentUrl)
+
 			window.Run()
 			window.Destroy()
 
-			close(done)
+			wg.Done()
 		})
 
-		<-done
+		wg.Wait()
 
 		select {
 		case <-stopChannel:
-			wg.Done()
 			return
 
 		default:
