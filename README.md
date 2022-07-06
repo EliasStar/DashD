@@ -41,16 +41,18 @@ DashD virtualizes the buttons of the screen, so they can be remote controlled vi
 ### Server
 On startup DashD will start a HTTP server on the specified port, which serves a basic web interface. It allows the user to change the website shown, resize the window, configure the lighting and press the virtual screen buttons, if those modules are enabled.
 
-|  CLI Flag   | Default | Unit  |
-| :---------: | :-----: | :---: |
-| `http_port` |   80    | Port  |
+|     CLI Flag     | Default | Unit  |
+| :--------------: | :-----: | :---: |
+| `server_enabled` |  true   | Bool  |
+|  `server_port`   |   80    | Port  |
 
 ### Socket
 DashD will listen for UDP packets on the specified port, which can be used to control the lighting with [Artemis-RGB](https://github.com/Artemis-RGB/Artemis) or any compatible program that supports the Artemis Lighting Protocol. If lighting is disabled, this module will be disabled.
 
-|  CLI Flag  | Default | Unit  |
-| :--------: | :-----: | :---: |
-| `udp_port` |  1872   | Port  |
+|     CLI Flag     | Default | Unit  |
+| :--------------: | :-----: | :---: |
+| `socket_enabled` |  true   | Bool  |
+|  `socket_port`   |  1872   | Port  |
 
 
 ## Installation
