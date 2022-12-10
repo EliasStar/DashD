@@ -5,10 +5,16 @@
     <input type='submit' value='Show' />
 </form>
 <br>
+<form action='/move' method='post'>
+    <label>Position:</label>
+    <input type='number' name='posX' />
+    <input type='number' name='posY' />
+    <input type='submit' value='Move' />
+</form>
+<br>
 <form action='/resize' method='post'>
-    <label>Width:</label>
+    <label>Size:</label>
     <input type='number' name='width' />
-    <label>Height:</label>
     <input type='number' name='height' />
     <input type='submit' value='Resize' />
 </form>

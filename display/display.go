@@ -1,86 +1,52 @@
 package display
 
 import (
-	"sync"
+	"os"
 
 	. "github.com/EliasStar/DashD/log"
-	"github.com/webview/webview"
 )
 
 const tag = "Display"
 
-var wg sync.WaitGroup
-var stopChannel chan any
+var chromium *Chromium
 
-var window webview.WebView
-
-var currentWidth, currentHeight int
-var currentUrl string
-
-func Init(width, height uint, url string) {
+func Init(browserPath, url string, posX, posY, width, height uint) {
 	Info(tag, "Starting.")
 
-	stopChannel = make(chan any)
+	var err error
+	chromium, err = NewChromium(browserPath, url, posX, posY, width, height)
+	PanicIf(tag, err)
 
-	currentWidth, currentHeight = int(width), int(height)
-	currentUrl = url
+	go func () {
+		PanicIf(tag, chromium.StartConnectionHandler())
+	}()
 
-	go run()
-}
-
-func run() {
-	for {
-		window = webview.New(false)
-
-		wg.Add(1)
-		window.Dispatch(func() {
-			window.SetTitle("DashD")
-			window.SetSize(currentWidth, currentHeight, webview.Hint(webview.HintNone))
-			window.Navigate(currentUrl)
-
-			window.Run()
-			window.Destroy()
-
-			wg.Done()
-		})
-
-		wg.Wait()
-
-		select {
-		case <-stopChannel:
-			return
-
-		default:
-			Info(tag, "Restarting.")
-		}
-	}
+	PanicIf(tag, chromium.InitConnection())
 }
 
 func Show(url string) {
 	Info(tag, "Now showing:", url)
+	ErrorIf(tag, chromium.Load(url))
+}
 
-	currentUrl = url
-
-	window.Dispatch(func() {
-		window.Navigate(currentUrl)
-	})
+func Move(posX, posY uint) {
+	Info(tag, "Changing window location to:", posX, "|", posX)
+	ErrorIf(tag, chromium.SetPosition(posX, posY))
 }
 
 func Resize(width, height uint) {
-	Info(tag, "Changed window size to:", width, "x", height)
+	Info(tag, "Changing window size to:", width, "x", height)
+	ErrorIf(tag, chromium.SetSize(width, height))
+}
 
-	currentWidth, currentHeight = int(width), int(height)
-
-	window.Dispatch(func() {
-		window.SetSize(currentWidth, currentHeight, webview.Hint(webview.HintNone))
-	})
+func Notify(channel chan<- os.Signal) {
+	go func ()  {
+		ErrorIf(tag, chromium.Wait())
+		channel <- os.Interrupt
+	}()
 }
 
 func Destroy() {
 	Info(tag, "Stopping.")
-
-	close(stopChannel)
-	window.Terminate()
-
-	wg.Wait()
+	ErrorIf(tag, chromium.Kill())
 }

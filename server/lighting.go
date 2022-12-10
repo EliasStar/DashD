@@ -14,18 +14,13 @@ import (
 func handleConfig(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 
-	type channel struct {
-		Index  uint `json:"channel"`
-		Length uint `json:"leds"`
-	}
-
-	type channelList struct {
-		List []channel `json:"channels"`
-	}
-
-	ErrorIf("HTTP::HandleConfig", json.NewEncoder(w).Encode(channelList{
-		List: []channel{{1, lighting.Length()}},
-	}))
+	ErrorIf("HTTP::HandleConfig", json.NewEncoder(w).Encode(
+		map[string][]map[string]uint{
+			"channels": {
+				{"channel": 1, "leds": lighting.Length()},
+			},
+		},
+	))
 }
 
 func handleUpdate(w http.ResponseWriter, r *http.Request) {

@@ -14,8 +14,8 @@ import (
 )
 
 var displayEnabled bool
-var windowWidth, windowHeight uint
-var defaultUrl string
+var browserPath, defaultUrl string
+var windowPosX, windowPosY, windowWidth, windowHeight uint
 
 var lightingEnabled bool
 var ledstripPin, ledstripLength uint
@@ -37,13 +37,16 @@ func init() {
 	flag.CommandLine.Usage = nil
 
 	flag.BoolVar(&displayEnabled, "display_enabled", true, "Enable display module")
-	flag.UintVar(&windowWidth, "window_width", 1024, "width of the window")
-	flag.UintVar(&windowHeight, "window_height", 768, "height of the window")
+	flag.StringVar(&browserPath, "browser_path", "/usr/bin/chromium-browser", "path to chromium-based browser executable")
 	flag.StringVar(&defaultUrl, "default_url", "data:text/html;base64,PGgxPkRhc2hEPC9oMT4KPHA+TGlnaHR3ZWlnaHQgZGFlbW9uIGZvciBSYXNwYmVycnkgUGkgZHJpdmVuIGtpb3NrczwvcD4=", "initial website to load")
+	flag.UintVar(&windowPosX, "window_x", 0, "x position of the window")
+	flag.UintVar(&windowPosY, "window_y", 0, "y position of the window")
+	flag.UintVar(&windowWidth, "window_width", 1920, "width of the window")
+	flag.UintVar(&windowHeight, "window_height", 1080, "height of the window")
 
 	flag.BoolVar(&lightingEnabled, "lighting_enabled", true, "Enable lighting module")
 	flag.UintVar(&ledstripPin, "ledstrip_pin", 18, "pin used for data line of the led strip")
-	flag.UintVar(&ledstripLength, "ledstrip_length", 62, "number of leds in the led strip")
+	flag.UintVar(&ledstripLength, "ledstrip_length", 100, "number of leds in the led strip")
 
 	flag.BoolVar(&screenEnabled, "screen_enabled", true, "Enable screen module")
 	flag.UintVar(&powerPin, "power_pin", 17, "pin connected to the power button of the screen")
@@ -65,7 +68,8 @@ func main() {
 	signal.Notify(signalChannel, syscall.SIGINT, syscall.SIGTERM)
 
 	if displayEnabled {
-		display.Init(windowWidth, windowHeight, defaultUrl)
+		display.Init(browserPath, defaultUrl, windowPosX, windowPosY, windowWidth, windowHeight)
+		display.Notify(signalChannel)
 		defer display.Destroy()
 	}
 

@@ -1,6 +1,7 @@
 # VS Code
 /.vscode/**
 !/.vscode/tasks.json
+!/.vscode/settings.json
 
 # Output
 /build/

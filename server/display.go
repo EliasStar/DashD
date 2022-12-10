@@ -20,6 +20,28 @@ func handleDisplay(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
+func handleMove(w http.ResponseWriter, r *http.Request) {
+	if r.ParseForm() != nil {
+		http.Error(w, "Bad Request", http.StatusBadRequest)
+		return
+	}
+
+	posX, err := strconv.ParseUint(r.Form.Get("posX"), 10, 32)
+	if err != nil {
+		http.Error(w, "Bad Request", http.StatusBadRequest)
+		return
+	}
+
+	posY, err := strconv.ParseUint(r.Form.Get("posY"), 10, 32)
+	if err != nil {
+		http.Error(w, "Bad Request", http.StatusBadRequest)
+		return
+	}
+
+	display.Move(uint(posX), uint(posY))
+	http.Redirect(w, r, "/", http.StatusSeeOther)
+}
+
 func handleResize(w http.ResponseWriter, r *http.Request) {
 	if r.ParseForm() != nil {
 		http.Error(w, "Bad Request", http.StatusBadRequest)

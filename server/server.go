@@ -26,6 +26,7 @@ func Init(port uint, displayEnabled, lightingEnabled, screenEnabled bool) {
 
 	if displayEnabled {
 		handler.HandleFunc("/display", handleDisplay)
+		handler.HandleFunc("/move", handleMove)
 		handler.HandleFunc("/resize", handleResize)
 	}
 
